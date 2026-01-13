@@ -1,0 +1,27 @@
+{
+  "name": "dashboard-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack dashboard with FastAPI backend and React frontend",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && python main.py",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:frontend": "cd frontend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "preview:frontend": "cd frontend && npm run preview",
+    "deploy:check": "echo Backend: backend/ && echo Frontend: frontend/"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "fastapi",
+    "react",
+    "typescript",
+    "postgresql",
+    "monorepo"
+  ],
+  "author": "",
+  "license": "MIT"
+}
