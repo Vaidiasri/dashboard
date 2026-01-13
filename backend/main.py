@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from app.config.database import engine, Base
 from app.routes.user import router as user_router
+from app.routes.trck import router as track_router
 
 app = FastAPI(
     title="Self Visualization",
@@ -11,6 +12,7 @@ app = FastAPI(
 
 # Include routers
 app.include_router(user_router)
+app.include_router(track_router)
 
 
 @app.on_event("startup")
