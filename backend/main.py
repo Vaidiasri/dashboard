@@ -14,7 +14,7 @@ async def startup():
     """Create database tables on startup"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("✅ Database tables created successfully!")
+    print("Database tables created successfully!")
 
 
 @app.get("/")
