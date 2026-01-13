@@ -17,6 +17,7 @@ async def get_analytics(
     age_group: str = Query(None),
     gender: str = Query(None),
     db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     """Get analytics data for feature clicks."""
     # Build filters
