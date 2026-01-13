@@ -9,6 +9,8 @@ psycopg2-binary==2.9.10
 
 # Authentication & Security
 python-jose==3.5.0
+pwdlib==0.3.0
+argon2-cffi==25.1.0
 passlib==1.7.4
 bcrypt==4.0.1
 python-multipart==0.0.21
