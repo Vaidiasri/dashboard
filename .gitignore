@@ -1,0 +1,124 @@
+# ===========================
+# Root Level .gitignore
+# ===========================
+
+# ===========================
+# Backend (Python/FastAPI)
+# ===========================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+myenv/
+venv/
+env/
+ENV/
+.venv/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Testing
+test_*.py
+quick_test.py
+*.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Alembic
+alembic/versions/*.pyc
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*_output.txt
+
+# ===========================
+# Frontend (Node/React/Vue)
+# ===========================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.nuxt/
+.cache/
+
+# Environment
+.env.production
+.env.development
+
+# ===========================
+# OS Specific
+# ===========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ===========================
+# Git & Version Control
+# ===========================
+.git/
+*.orig
+
+# ===========================
+# Deployment & Sensitive
+# ===========================
+
+# Deployment guides with sensitive info (uncomment if needed)
+# DEPLOYMENT_GUIDE.md
+# deployment/
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.cert
+*.crt
+
+# Config files with credentials
+config.local.*
+credentials.json
