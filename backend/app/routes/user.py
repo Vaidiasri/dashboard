@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from ..untils.auth import (
+from ..utils.auth import (
     get_password_hash,
     verify_password,
     verify_access_token,
@@ -17,16 +17,25 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserOut)
 async def create_user(request: UserCreate, db: AsyncSession = Depends(get_db)):
     try:
-        # Check if email already exists
-        query = select(UserModel).where(UserModel.email == request.email)
+        # Check if email or username already exists
+        query = select(UserModel).where(
+            (UserModel.email == request.email)
+            | (UserModel.username == request.username)
+        )
         result = await db.execute(query)
         existing_user = result.scalars().first()
 
         if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered",
-            )
+            if existing_user.email == request.email:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email already registered",
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Username already taken",
+                )
 
         # Hash password and create new user
         hashed_pwd = get_password_hash(request.password)

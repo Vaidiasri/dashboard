@@ -5,7 +5,7 @@ from ..config.database import get_db, AsyncSession
 from ..model.featureclick import FeatureClick
 from ..model.user import User as UserModel
 from ..schema.featureclick import ClickCreate, ClickOut
-from ..untils.auth import get_current_user
+from ..utils.auth import get_current_user
 
 router = APIRouter(prefix="/track", tags=["tracks"])
 

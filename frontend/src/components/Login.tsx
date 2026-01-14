@@ -57,7 +57,7 @@ const Login: React.FC = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      age: null,
+      age: "",
       gender: "",
     },
     validationSchema: registerSchema,
@@ -72,7 +72,11 @@ const Login: React.FC = () => {
         setSelectedTab(0); // Switch to Login tab
       } catch (err) {
         const error = err as AxiosError<{ detail: string }>;
-        alert(error.response?.data?.detail || "Registration failed");
+        alert(
+          `Error: ${error.message}\nDetail: ${
+            error.response?.data?.detail || "No response data"
+          }`
+        );
       } finally {
         setSubmitting(false);
       }

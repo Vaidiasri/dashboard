@@ -13,7 +13,7 @@ from app.config.database import engine, Base, AsyncSessionLocal
 from app.model.user import User
 from app.model.featureclick import FeatureClick
 import uuid
-from app.untils.auth import get_password_hash
+from app.utils.auth import get_password_hash
 
 # Dummy data
 USERNAMES = [
