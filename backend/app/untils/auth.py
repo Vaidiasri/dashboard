@@ -56,8 +56,7 @@ def verify_access_token(token: str) -> Optional[Dict[str, Any]]:
 async def get_current_user(
     token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
 ) -> UserModel:
-    """Get authenticated user from token."""
-    # Token invalid hai toh yeh error throw karo
+
     error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
