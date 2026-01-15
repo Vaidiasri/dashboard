@@ -41,12 +41,16 @@ async def get_analytics(
         .group_by(FeatureClick.feature_name)
     )
 
-    # Line chart: clicks per day
+    # Line chart: clicks per day per feature
     line_query = (
-        select(cast(FeatureClick.timestamp, Date), func.count(FeatureClick.id))
+        select(
+            cast(FeatureClick.timestamp, Date),
+            FeatureClick.feature_name,
+            func.count(FeatureClick.id),
+        )
         .join(UserModel)
         .where(*filters)
-        .group_by(cast(FeatureClick.timestamp, Date))
+        .group_by(cast(FeatureClick.timestamp, Date), FeatureClick.feature_name)
     )
 
     bar_result = await db.execute(bar_query)
@@ -55,7 +59,8 @@ async def get_analytics(
     return {
         "bar_data": [{"feature": row[0], "clicks": row[1]} for row in bar_result.all()],
         "line_data": [
-            {"date": str(row[0]), "clicks": row[1]} for row in line_result.all()
+            {"date": str(row[0]), "feature": row[1], "clicks": row[2]}
+            for row in line_result.all()
         ],
     }
 

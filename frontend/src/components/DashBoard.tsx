@@ -82,6 +82,41 @@ const DashBoard = () => {
     }
   };
 
+  // Derived state for Line Chart
+  const getProcessedLineData = () => {
+    if (!data.lineData || data.lineData.length === 0) return [];
+
+    if (selectedFeature) {
+      // Filter by selected feature
+      return data.lineData
+        .filter((item: any) => item.feature === selectedFeature)
+        .map((item: any) => ({
+          name: item.date,
+          value: item.clicks,
+        }));
+    } else {
+      // Aggregate all features by date
+      const aggregated: Record<string, number> = {};
+      data.lineData.forEach((item: any) => {
+        if (aggregated[item.date]) {
+          aggregated[item.date] += item.clicks;
+        } else {
+          aggregated[item.date] = item.clicks;
+        }
+      });
+      return Object.keys(aggregated)
+        .map((date) => ({
+          name: date,
+          value: aggregated[date],
+        }))
+        .sort(
+          (a, b) => new Date(a.name).getTime() - new Date(b.name).getTime()
+        );
+    }
+  };
+
+  const processedLineData = getProcessedLineData();
+
   // Debugging data to avoid unused variable error
   useEffect(() => {
     console.log("Dashboard Data:", data);
@@ -260,7 +295,7 @@ const DashBoard = () => {
               </h3>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data.lineData}>
+                  <LineChart data={processedLineData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                     <XAxis dataKey="name" stroke="#888" />
                     <YAxis stroke="#888" />
