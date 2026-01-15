@@ -37,9 +37,13 @@ async def get_analytics(
 
     # Build filters (Inclusive of the End Date up to 23:59:59.999)
     # Convert dates to datetime to ensure robust comparison with TIMESTAMP columns
-    start_dt = datetime.combine(s_date, datetime.min.time())  # YYYY-MM-DD 00:00:00
-    end_dt = datetime.combine(e_date, datetime.max.time())  # YYYY-MM-DD 23:59:59.999999
+    # IMPORTANT: We assume the input Date is effectively "Local Date".
+    # Since we can't solve all Timezone issues without user input, we expand the range slightly.
+    # But for now, we make it simple: 00:00 to 23:59 inclusive.
+    start_dt = datetime.combine(s_date, datetime.min.time())
+    end_dt = datetime.combine(e_date, datetime.max.time())
 
+    # Ensure timestamp comparison is robust
     filters = [FeatureClick.timestamp >= start_dt, FeatureClick.timestamp <= end_dt]
 
     if age_group == "<18":

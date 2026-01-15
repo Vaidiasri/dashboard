@@ -51,9 +51,13 @@ export const useAnalytics = () => {
        }
     }
 
+    // CACHE BUSTER: Add timestamp to prevent browser caching of GET requests
+    // This is crucial for verifying "Read-After-Write" 
+    const finalParams = { ...params, _t: Date.now() };
+
     try {
       const res = await axiosInstance.get("/track/analytics", {
-        params,
+        params: finalParams,
       });
       console.log("Fetched Analytics Data:", res.data);
       setData({ barData: res.data.bar_data, lineData: res.data.line_data });
@@ -106,23 +110,32 @@ export const useAnalytics = () => {
         throttleTimeout.current = null;
       }, 2000);
 
-      // OPTIMISTIC UPDATE: Increment count immediately for instant feedback!
-      setData((prev) => {
-        const newBarData = prev.barData.map((item) =>
-          item.feature === featureName
-            ? { ...item, clicks: item.clicks + 1 }
-            : item
-        );
-        return { ...prev, barData: newBarData };
-      });
+      // SMART OPTIMISTIC LOGIC:
+      // If demographic filters (Age/Gender) are active, we CANNOT guarantee the user matches them.
+      // So we DISABLE optimistic updates to prevent "Revert/Flicker" (User Request).
+      const hasDemographics = filters.ageGroup || filters.gender;
+
+      if (!hasDemographics) {
+        // Safe to update optimistically
+        setData((prev) => {
+          const newBarData = prev.barData.map((item) =>
+            item.feature === featureName
+              ? { ...item, clicks: item.clicks + 1 }
+              : item
+          );
+          return { ...prev, barData: newBarData };
+        });
+      } else {
+        console.log("Optimistic update skipped due to active demographic filters (Safe Mode).");
+      }
 
       try {
         console.log(`Tracking initiated for: ${featureName}`);
         await axiosInstance.post("/track/", { feature_name: featureName });
         console.log(`Tracked click for: ${featureName} - Waiting for DB commit...`);
         
-        // Short delay to ensure DB consistency (Read-your-writes)
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Increased delay to ensure AWS/Cloud DB consistency (500ms)
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Re-fetch data to ensure server sync
         console.log("Re-fetching analytics data to sync...");
