@@ -32,7 +32,7 @@ export const useAnalytics = () => {
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   // Data fetch logic extracted for reuse (The Elite Way)
-  const fetchAnalytics = useCallback(async (isTracking = false) => {
+  const fetchAnalytics = useCallback(async (isTracking = false, ensureToday = false) => {
     // Clean filters
     const params: any = { ...filters };
     if (!params.ageGroup) delete params.ageGroup;
@@ -41,6 +41,15 @@ export const useAnalytics = () => {
     // Ensure dates are present
     if (!params.startDate) params.startDate = firstDay;
     if (!params.endDate) params.endDate = lastDay;
+
+    // SMART FIX: If interacting, ensure we fetch up to TODAY so the user sees their new data
+    if (ensureToday) {
+       const todayStr = new Date().toISOString().split("T")[0];
+       if (params.endDate < todayStr) {
+         params.endDate = todayStr;
+         console.log("Auto-extending fetch date to include new data (Today)");
+       }
+    }
 
     try {
       const res = await axiosInstance.get("/track/analytics", {
@@ -118,9 +127,8 @@ export const useAnalytics = () => {
         // Re-fetch data to ensure server sync
         console.log("Re-fetching analytics data to sync...");
         
-        // NOTE: Commented out to prevent "Snap Back" effect when filters don't match today's date.
-        // User prefers sticky optimistic updates over strict server sync for this demo.
-        // await fetchAnalytics(false); 
+        // SMART FETCH: Ensure we fetch up to TODAY so the new DB record is included!
+        await fetchAnalytics(false, true); 
         
         console.log("Analytics data re-fetched and synced.");
         
