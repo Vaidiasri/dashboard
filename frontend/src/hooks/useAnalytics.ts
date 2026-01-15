@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useCookies } from "react-cookie";
 import axiosInstance from "../api/axios";
 import type { DashboardFilters, AnalyticsData, LineDataItem, RawLineDataItem } from "../types/dashboard";
@@ -31,9 +31,11 @@ export const useAnalytics = () => {
   const [data, setData] = useState<AnalyticsData>({ barData: [], lineData: [] });
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
-  // Data fetch logic
+  // Data fetch & Tracking logic
+  const isFirstRun = useRef(true);
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataAndTrack = async () => {
       // Clean filters
       const params: any = { ...filters };
       if (!params.ageGroup) delete params.ageGroup;
@@ -48,15 +50,23 @@ export const useAnalytics = () => {
           params,
         });
         setData({ barData: res.data.bar_data, lineData: res.data.line_data });
+
+        // Track filter change (skip on mount)
+        if (isFirstRun.current) {
+          isFirstRun.current = false;
+        } else {
+          await axiosInstance.post("/track/", { feature_name: "Filter Interaction" });
+        }
+
       } catch (err) {
-        console.error("Failed to fetch analytics", err);
+        console.error("Failed to fetch analytics or track", err);
       }
       setCookie(COOKIE_KEYS.DASHBOARD_FILTERS, filters, { path: "/" });
     };
 
     // Debounce API calls by 500ms
     const timer = setTimeout(() => {
-      fetchData();
+      fetchDataAndTrack();
     }, 500);
 
     return () => clearTimeout(timer);
