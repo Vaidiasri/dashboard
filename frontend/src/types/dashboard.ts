@@ -41,6 +41,8 @@ export interface DemographicsFiltersProps {
 export interface SidebarProps {
   filters: DashboardFilters;
   setFilters: (filters: DashboardFilters) => void;
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
 }
 
 export interface AnalyticsChartsProps {

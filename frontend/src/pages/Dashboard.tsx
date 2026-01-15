@@ -10,8 +10,13 @@ import Sidebar from "../components/dashboard/Sidebar";
 import AnalyticsCharts from "../components/dashboard/AnalyticsCharts";
 import { useAnalytics } from "../hooks/useAnalytics";
 
+import { useState } from "react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
+
 const DashBoard = () => {
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const {
     filters,
     setFilters,
@@ -29,17 +34,33 @@ const DashBoard = () => {
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
       {/* 1. SIDEBAR */}
-      <Sidebar filters={filters} setFilters={setFilters} />
+      <Sidebar
+        filters={filters}
+        setFilters={setFilters}
+        mobileOpen={sidebarOpen}
+        setMobileOpen={setSidebarOpen}
+      />
 
       {/* 2. MAIN CONTENT */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="border-b border-zinc-800 p-4 flex justify-between items-center bg-zinc-900/50">
-          <h1 className="font-semibold tracking-wide">Product Dashboard</h1>
+          <div className="flex items-center gap-4">
+            {/* Mobile Sidebar Toggle */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800"
+            >
+              <Bars3Icon className="h-6 w-6" />
+            </button>
+            <h1 className="font-semibold tracking-wide text-lg sm:text-xl">
+              Product Dashboard
+            </h1>
+          </div>
 
           {/* Headless UI Menu Profile */}
           <Menu as="div" className="relative">
-            <MenuButton className="flex items-center gap-2 bg-zinc-800 px-4 py-2 rounded-full hover:bg-zinc-700 transition">
-              <span className="text-sm">My Account</span>
+            <MenuButton className="flex items-center gap-2 bg-zinc-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full hover:bg-zinc-700 transition">
+              <span className="text-xs sm:text-sm">My Account</span>
             </MenuButton>
             <Transition
               enter="transition duration-100 ease-out"
@@ -67,7 +88,7 @@ const DashBoard = () => {
           </Menu>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <AnalyticsCharts
             data={data}
             processedLineData={processedLineData}
