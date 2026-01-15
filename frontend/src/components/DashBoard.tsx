@@ -12,6 +12,18 @@ import {
   TabPanels,
   TabPanel,
 } from "@headlessui/react";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axios";
 
@@ -180,13 +192,62 @@ const DashBoard = () => {
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
-          {/* Yahan hum charts insert karenge Recharts ke */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4">
-              Bar Chart (Placeholder)
+            {/* Bar Chart */}
+            <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 flex flex-col">
+              <h3 className="text-lg font-semibold mb-4 text-zinc-300">
+                User Activity (Bar)
+              </h3>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.barData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="name" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#18181b",
+                        borderColor: "#27272a",
+                      }}
+                      itemStyle={{ color: "#e4e4e7" }}
+                    />
+                    <Legend />
+                    <Bar dataKey="value" fill="#2563eb" name="Users" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4">
-              Line Chart (Placeholder)
+
+            {/* Line Chart */}
+            <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 flex flex-col">
+              <h3 className="text-lg font-semibold mb-4 text-zinc-300">
+                Growth Trends (Line)
+              </h3>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={data.lineData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="name" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#18181b",
+                        borderColor: "#27272a",
+                      }}
+                      itemStyle={{ color: "#e4e4e7" }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      name="Growth"
+                      dot={{ r: 4, fill: "#10b981" }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </main>
