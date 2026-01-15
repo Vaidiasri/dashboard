@@ -97,21 +97,32 @@ export const useAnalytics = () => {
         throttleTimeout.current = null;
       }, 2000);
 
-        try {
+      // OPTIMISTIC UPDATE: Increment count immediately for instant feedback!
+      setData((prev) => {
+        const newBarData = prev.barData.map((item) =>
+          item.feature === featureName
+            ? { ...item, clicks: item.clicks + 1 }
+            : item
+        );
+        return { ...prev, barData: newBarData };
+      });
+
+      try {
         console.log(`Tracking initiated for: ${featureName}`);
         await axiosInstance.post("/track/", { feature_name: featureName });
         console.log(`Tracked click for: ${featureName} - Waiting for DB commit...`);
         
         // Short delay to ensure DB consistency (Read-your-writes)
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
-        // THE ELITE WAY: Re-fetch data to show updated counts immediately!
-        console.log("Re-fetching analytics data...");
+        // Re-fetch data to ensure server sync
+        console.log("Re-fetching analytics data to sync...");
         await fetchAnalytics(false); 
-        console.log("Analytics data re-fetched.");
+        console.log("Analytics data re-fetched and synced.");
         
       } catch (err) {
         console.error("Tracking call failed", err);
+        // Rollback could be implemented here if needed, but for analytics it's usually fine
       }
     } else {
       console.log(`Tracking throttled for: ${featureName}`);
