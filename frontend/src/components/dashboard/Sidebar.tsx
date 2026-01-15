@@ -10,7 +10,9 @@ const Sidebar = ({ filters, setFilters }: SidebarProps) => {
 
   return (
     <div className="w-72 border-r border-zinc-800 p-6 hidden md:block bg-zinc-950">
-      <h2 className="text-xl font-bold mb-8 text-blue-500">Analytics Panel</h2>
+      <h2 className="text-xl font-bold mb-8 text-blue-500">
+        Analytics Dashboard
+      </h2>
 
       <TabGroup>
         <TabList className="flex flex-col gap-2">
