@@ -53,6 +53,7 @@ const DashBoard = () => {
     ...(cookies.dashboardFilters || {}),
   });
   const [data, setData] = useState({ barData: [], lineData: [] });
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   // Data fetch logic
   useEffect(() => {
@@ -65,6 +66,21 @@ const DashBoard = () => {
     };
     fetchData();
   }, [filters]);
+
+  const handleBarClick = async (payload: any) => {
+    if (!payload || !payload.activePayload) return;
+
+    const featureName = payload.activePayload[0].payload.name;
+    setSelectedFeature(featureName);
+
+    // Requirement: Track dashboard's own feature usage
+    try {
+      await axiosInstance.post("/track/", { feature_name: featureName });
+      console.log(`Tracked click for: ${featureName}`);
+    } catch (err) {
+      console.error("Tracking call failed", err);
+    }
+  };
 
   // Debugging data to avoid unused variable error
   useEffect(() => {
@@ -150,6 +166,18 @@ const DashBoard = () => {
                 <option value="18-40">18 - 40</option>
                 <option value=">40">&gt; 40</option>
               </select>
+
+              <select
+                className="w-full bg-zinc-900 p-2 rounded border border-zinc-800 text-sm"
+                value={filters.gender}
+                onChange={(e) =>
+                  setFilters({ ...filters, gender: e.target.value })
+                }
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
             </TabPanel>
           </TabPanels>
         </TabGroup>
@@ -200,7 +228,11 @@ const DashBoard = () => {
               </h3>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.barData}>
+                  <BarChart
+                    data={data.barData}
+                    onClick={handleBarClick}
+                    className="cursor-pointer"
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                     <XAxis dataKey="name" stroke="#888" />
                     <YAxis stroke="#888" />
@@ -210,6 +242,7 @@ const DashBoard = () => {
                         borderColor: "#27272a",
                       }}
                       itemStyle={{ color: "#e4e4e7" }}
+                      cursor={{ fill: "rgba(37, 99, 235, 0.1)" }}
                     />
                     <Legend />
                     <Bar dataKey="value" fill="#2563eb" name="Users" />
@@ -221,7 +254,9 @@ const DashBoard = () => {
             {/* Line Chart */}
             <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 flex flex-col">
               <h3 className="text-lg font-semibold mb-4 text-zinc-300">
-                Growth Trends (Line)
+                {selectedFeature
+                  ? `Trend: ${selectedFeature}`
+                  : "Growth Trends (Line)"}
               </h3>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
