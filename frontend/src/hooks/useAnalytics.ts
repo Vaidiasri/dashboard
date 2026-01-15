@@ -72,18 +72,29 @@ export const useAnalytics = () => {
     return () => clearTimeout(timer);
   }, [filters, setCookie]);
 
+  // Throttling helper for clicks
+  const lastClickTime = useRef<number>(0);
+
   const handleBarClick = async (payload: any) => {
     // Recharts Bar onClick returns the data item directly
     if (!payload || !payload.feature) return;
 
-    const featureName = payload.feature; 
+    const featureName = payload.feature;
+    // 1. Immediate UI Update
     setSelectedFeature(featureName);
 
-    try {
-      await axiosInstance.post("/track/", { feature_name: featureName });
-      console.log(`Tracked click for: ${featureName}`);
-    } catch (err) {
-      console.error("Tracking call failed", err);
+    // 2. Throttled API Call (2 seconds limit)
+    const now = Date.now();
+    if (now - lastClickTime.current >= 2000) {
+      try {
+        await axiosInstance.post("/track/", { feature_name: featureName });
+        console.log(`Tracked click for: ${featureName}`);
+        lastClickTime.current = now;
+      } catch (err) {
+        console.error("Tracking call failed", err);
+      }
+    } else {
+      console.log(`Tracking throttled for: ${featureName}`);
     }
   };
 
