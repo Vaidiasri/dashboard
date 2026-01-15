@@ -25,11 +25,29 @@ import {
 } from "@heroicons/react/24/outline";
 import { loginSchema, registerSchema } from "../schemas/auth";
 import AuthInput from "./AuthInput";
+import NotificationModal from "./NotificationModal";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [enabled, setEnabled] = useState(false); // Remember me for login
   const [selectedTab, setSelectedTab] = useState(0); // 0: Login, 1: Register
+
+  // Notification Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState<"success" | "error">("success");
+
+  const showNotification = (
+    title: string,
+    message: string,
+    type: "success" | "error"
+  ) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setModalOpen(true);
+  };
 
   // Login Formik
   const loginFormik = useFormik<LoginValue>({
@@ -45,7 +63,11 @@ const Login: React.FC = () => {
         navigate("/dashboard");
       } catch (err) {
         const error = err as AxiosError<{ detail: string }>;
-        alert(error.response?.data?.detail || "Login failed");
+        showNotification(
+          "Login Failed",
+          error.response?.data?.detail || "Login failed",
+          "error"
+        );
       }
     },
   });
@@ -68,14 +90,20 @@ const Login: React.FC = () => {
 
         await axiosInstance.post("/users/", registerData);
 
-        alert("Registration successful! Please login.");
+        showNotification(
+          "Success",
+          "Registration successful! Please login.",
+          "success"
+        );
         setSelectedTab(0); // Switch to Login tab
       } catch (err) {
         const error = err as AxiosError<{ detail: string }>;
-        alert(
+        showNotification(
+          "Registration Error",
           `Error: ${error.message}\nDetail: ${
             error.response?.data?.detail || "No response data"
-          }`
+          }`,
+          "error"
         );
       } finally {
         setSubmitting(false);
@@ -86,7 +114,7 @@ const Login: React.FC = () => {
   return (
     <div className="fixed inset-0 flex h-full w-full items-center justify-center bg-black text-white overflow-hidden font-sans px-4 sm:px-0">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]"></div>
       <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-purple-500 opacity-20 blur-[100px]"></div>
 
       <Transition
@@ -252,6 +280,14 @@ const Login: React.FC = () => {
           </TabGroup>
         </div>
       </Transition>
+
+      <NotificationModal
+        isOpen={modalOpen}
+        closeModal={() => setModalOpen(false)}
+        title={modalTitle}
+        message={modalMessage}
+        type={modalType}
+      />
     </div>
   );
 };

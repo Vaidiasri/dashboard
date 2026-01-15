@@ -16,3 +16,12 @@ export interface LoginResponse {
     access_token: string;
     token_type: string;
 }
+
+export interface AuthInputProps {
+    name: string;
+    type?: string;
+    placeholder: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formik: any; 
+    icon: React.ElementType; // Heroicon component
+}

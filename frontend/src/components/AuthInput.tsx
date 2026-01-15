@@ -1,15 +1,6 @@
 import React from "react";
 import { Field, Input } from "@headlessui/react";
-import type { FormikProps } from "formik";
-
-interface AuthInputProps {
-  name: string;
-  type?: string;
-  placeholder: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: FormikProps<any>;
-  icon: React.ElementType; // Heroicon component
-}
+import type { AuthInputProps } from "../types/auth";
 
 const AuthInput: React.FC<AuthInputProps> = ({
   name,
