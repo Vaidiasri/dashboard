@@ -1,0 +1,90 @@
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import type { AnalyticsChartsProps } from "../../types/dashboard";
+
+const AnalyticsCharts = ({
+  data,
+  processedLineData,
+  selectedFeature,
+  onBarClick,
+}: AnalyticsChartsProps) => {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Bar Chart */}
+      <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 flex flex-col">
+        <h3 className="text-lg font-semibold mb-4 text-zinc-300">
+          User Activity (Bar)
+        </h3>
+        <div className="flex-1 min-h-0 w-full" style={{ minHeight: "200px" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={data.barData}
+              onClick={onBarClick}
+              className="cursor-pointer"
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <XAxis dataKey="feature" stroke="#888" />
+              <YAxis stroke="#888" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#18181b",
+                  borderColor: "#27272a",
+                }}
+                itemStyle={{ color: "#e4e4e7" }}
+                cursor={{ fill: "rgba(37, 99, 235, 0.1)" }}
+              />
+              <Legend />
+              <Bar dataKey="clicks" fill="#2563eb" name="Users" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Line Chart */}
+      <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 flex flex-col">
+        <h3 className="text-lg font-semibold mb-4 text-zinc-300">
+          {selectedFeature
+            ? `Trend: ${selectedFeature}`
+            : "Growth Trends (Line)"}
+        </h3>
+        <div className="flex-1 min-h-0 w-full" style={{ minHeight: "200px" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={processedLineData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <XAxis dataKey="name" stroke="#888" />
+              <YAxis stroke="#888" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#18181b",
+                  borderColor: "#27272a",
+                }}
+                itemStyle={{ color: "#e4e4e7" }}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#10b981"
+                strokeWidth={2}
+                name="Growth"
+                dot={{ r: 4, fill: "#10b981" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AnalyticsCharts;

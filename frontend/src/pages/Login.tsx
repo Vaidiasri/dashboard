@@ -24,8 +24,8 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { loginSchema, registerSchema } from "../schemas/auth";
-import AuthInput from "./AuthInput";
-import NotificationModal from "./NotificationModal";
+import AuthInput from "../components/AuthInput";
+import NotificationModal from "../components/NotificationModal";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";
-import DashBoard from "./components/DashBoard";
+import Login from "./pages/Login";
+import DashBoard from "./pages/Dashboard";
 function App() {
   return (
     <BrowserRouter>

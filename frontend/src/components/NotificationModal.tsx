@@ -8,13 +8,7 @@ import {
 } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
-interface NotificationModalProps {
-  isOpen: boolean;
-  closeModal: () => void;
-  title: string;
-  message: string;
-  type: "success" | "error";
-}
+import type { NotificationModalProps } from "../types/components";
 
 const NotificationModal: React.FC<NotificationModalProps> = ({
   isOpen,
