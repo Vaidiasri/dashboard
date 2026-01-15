@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Query
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy import func, cast, Date, select
 from ..config.database import get_db, AsyncSession
 from ..model.featureclick import FeatureClick
@@ -12,16 +12,26 @@ router = APIRouter(prefix="/track", tags=["tracks"])
 
 @router.get("/analytics")
 async def get_analytics(
-    start_date: datetime = Query(...),
-    end_date: datetime = Query(...),
-    age_group: str = Query(None),
-    gender: str = Query(None),
+    start_date: str = Query(..., alias="startDate"),
+    end_date: str = Query(..., alias="endDate"),
+    age_group: str | None = Query(None, alias="ageGroup"),
+    gender: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
     create_user: UserModel = Depends(get_current_user),
 ):
     """Get analytics data for feature clicks."""
+    # Manual Parsing to be robust against frontend formats
+    try:
+        s_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        e_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid date format. Expected YYYY-MM-DD",
+        )
+
     # Build filters
-    filters = [FeatureClick.timestamp.between(start_date, end_date)]
+    filters = [FeatureClick.timestamp.between(s_date, e_date)]
 
     if age_group == "<18":
         filters.append(UserModel.age < 18)

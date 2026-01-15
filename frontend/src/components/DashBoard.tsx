@@ -24,8 +24,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const DashBoard = () => {
   const navigate = useNavigate();
@@ -58,13 +61,32 @@ const DashBoard = () => {
   // Data fetch logic
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axiosInstance.get("/track/analytics", {
-        params: filters,
-      });
-      setData({ barData: res.data.bar_data, lineData: res.data.line_data });
+      // Clean filters: remove empty strings to avoid 422 errors or unwanted empty filtering
+      const params: any = { ...filters };
+      if (!params.ageGroup) delete params.ageGroup;
+      if (!params.gender) delete params.gender;
+
+      // Ensure dates are present
+      if (!params.startDate) params.startDate = firstDay;
+      if (!params.endDate) params.endDate = lastDay;
+
+      try {
+        const res = await axiosInstance.get("/track/analytics", {
+          params,
+        });
+        setData({ barData: res.data.bar_data, lineData: res.data.line_data });
+      } catch (err) {
+        console.error("Failed to fetch analytics", err);
+      }
       setCookie("dashboardFilters", filters, { path: "/" });
     };
-    fetchData();
+
+    // Debounce API calls by 500ms
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [filters]);
 
   const handleBarClick = async (payload: any) => {
@@ -166,24 +188,53 @@ const DashBoard = () => {
             <TabPanel className="space-y-4">
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-zinc-500">Start Date</label>
-                <input
-                  type="date"
-                  className="bg-zinc-900 p-2 rounded border border-zinc-800 text-sm"
-                  value={filters.startDate}
-                  onChange={(e) =>
-                    setFilters({ ...filters, startDate: e.target.value })
-                  }
-                />
+                <div className="w-full">
+                  <DatePicker
+                    selected={
+                      filters.startDate ? new Date(filters.startDate) : null
+                    }
+                    onChange={(date) => {
+                      if (date) {
+                        // Adjust for timezone to keep the selected date string accurate
+                        const offset = date.getTimezoneOffset();
+                        const localDate = new Date(
+                          date.getTime() - offset * 60 * 1000
+                        );
+                        const dateString = localDate
+                          .toISOString()
+                          .split("T")[0];
+                        setFilters({ ...filters, startDate: dateString });
+                      }
+                    }}
+                    className="w-full bg-zinc-900 p-2 rounded border border-zinc-800 text-sm focus:outline-none focus:border-blue-500"
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select start date"
+                  />
+                </div>
 
                 <label className="text-xs text-zinc-500">End Date</label>
-                <input
-                  type="date"
-                  className="bg-zinc-900 p-2 rounded border border-zinc-800 text-sm"
-                  value={filters.endDate}
-                  onChange={(e) =>
-                    setFilters({ ...filters, endDate: e.target.value })
-                  }
-                />
+                <div className="w-full">
+                  <DatePicker
+                    selected={
+                      filters.endDate ? new Date(filters.endDate) : null
+                    }
+                    onChange={(date) => {
+                      if (date) {
+                        const offset = date.getTimezoneOffset();
+                        const localDate = new Date(
+                          date.getTime() - offset * 60 * 1000
+                        );
+                        const dateString = localDate
+                          .toISOString()
+                          .split("T")[0];
+                        setFilters({ ...filters, endDate: dateString });
+                      }
+                    }}
+                    className="w-full bg-zinc-900 p-2 rounded border border-zinc-800 text-sm focus:outline-none focus:border-blue-500"
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select end date"
+                  />
+                </div>
               </div>
             </TabPanel>
 
@@ -261,7 +312,10 @@ const DashBoard = () => {
               <h3 className="text-lg font-semibold mb-4 text-zinc-300">
                 User Activity (Bar)
               </h3>
-              <div className="flex-1 min-h-0">
+              <div
+                className="flex-1 min-h-0 w-full"
+                style={{ minHeight: "200px" }}
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={data.barData}
@@ -269,7 +323,7 @@ const DashBoard = () => {
                     className="cursor-pointer"
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="name" stroke="#888" />
+                    <XAxis dataKey="feature" stroke="#888" />
                     <YAxis stroke="#888" />
                     <Tooltip
                       contentStyle={{
@@ -280,7 +334,7 @@ const DashBoard = () => {
                       cursor={{ fill: "rgba(37, 99, 235, 0.1)" }}
                     />
                     <Legend />
-                    <Bar dataKey="value" fill="#2563eb" name="Users" />
+                    <Bar dataKey="clicks" fill="#2563eb" name="Users" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -293,7 +347,10 @@ const DashBoard = () => {
                   ? `Trend: ${selectedFeature}`
                   : "Growth Trends (Line)"}
               </h3>
-              <div className="flex-1 min-h-0">
+              <div
+                className="flex-1 min-h-0 w-full"
+                style={{ minHeight: "200px" }}
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={processedLineData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
