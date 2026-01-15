@@ -73,9 +73,10 @@ export const useAnalytics = () => {
   }, [filters, setCookie]);
 
   const handleBarClick = async (payload: any) => {
-    if (!payload || !payload.activePayload) return;
+    // Recharts Bar onClick returns the data item directly
+    if (!payload || !payload.feature) return;
 
-    const featureName = payload.activePayload[0].payload.feature; // Access 'feature' prop not 'name'
+    const featureName = payload.feature; 
     setSelectedFeature(featureName);
 
     try {

@@ -27,11 +27,7 @@ const AnalyticsCharts = ({
         </h3>
         <div className="flex-1 min-h-0 w-full" style={{ minHeight: "200px" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data.barData}
-              onClick={onBarClick}
-              className="cursor-pointer"
-            >
+            <BarChart data={data.barData} className="cursor-pointer">
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
               <XAxis dataKey="feature" stroke="#888" />
               <YAxis stroke="#888" />
@@ -44,7 +40,13 @@ const AnalyticsCharts = ({
                 cursor={{ fill: "rgba(37, 99, 235, 0.1)" }}
               />
               <Legend />
-              <Bar dataKey="clicks" fill="#2563eb" name="Users" />
+              <Bar
+                dataKey="clicks"
+                fill="#2563eb"
+                name="Users"
+                onClick={onBarClick}
+                cursor="pointer"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
