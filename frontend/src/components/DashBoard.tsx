@@ -182,6 +182,7 @@ const DashBoard = () => {
             </div>
             <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4">
               Line Chart (Placeholder)
+              <div className="hidden">{console.log(data)}</div>
             </div>
           </div>
         </main>
