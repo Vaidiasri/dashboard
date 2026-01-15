@@ -117,7 +117,11 @@ export const useAnalytics = () => {
 
         // Re-fetch data to ensure server sync
         console.log("Re-fetching analytics data to sync...");
-        await fetchAnalytics(false); 
+        
+        // NOTE: Commented out to prevent "Snap Back" effect when filters don't match today's date.
+        // User prefers sticky optimistic updates over strict server sync for this demo.
+        // await fetchAnalytics(false); 
+        
         console.log("Analytics data re-fetched and synced.");
         
       } catch (err) {
