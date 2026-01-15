@@ -251,6 +251,42 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- FastAPI documentation
 - React documentation
 - Railway.app for hosting
+
+---
+
+## 🌱 Data Seeding
+
+To populate the database with dummy data (users and feature clicks) for testing:
+
+1.  **Ensure backend virtual environment is active.**
+2.  **Run the seed script:**
+
+```bash
+cd backend
+python seed.py
+```
+
+This will:
+
+- Reset the database (Drop/Create tables)
+- Create 20+ dummy users
+- Generate 150+ feature clicks across different dates
+- **Restart the backend server** after seeding to see changes.
+
+---
+
+## 📈 Scaling Architecture (Essay)
+
+**Q: If this dashboard needed to handle 1 million write-events per minute, how would you change your backend architecture?**
+
+**A:**
+Handling 1 million events per minute (~16k/sec) requires moving away from synchronous database writes for every API call. Here is the proposed architecture evolution:
+
+1.  **Ingestion Layer (Decoupling):** Replace direct DB writes with a high-throughput message queue like **Apache Kafka** or **RabbitMQ**. The `/track` endpoint would simply push events to a queue and return immediately (200 OK), ensuring low latency.
+2.  **Stream Processing:** Use consumers (e.g., Python workers or a stream processor like Flink/Spark) to batch process events from the Queue. Aggregations (e.g., clicks per hour) can be pre-calculated in real-time.
+3.  **Database Optimization:**
+    - **Write-Heavy DB:** Use **Cassandra** or **ScyllaDB** (Time-Series optimized) for storing raw event logs instead of PostgreSQL.
+    - **Read-Heavy DB:** Keep PostgreSQL for User data and relational metadata. Use **Redis** to cache pre-aggregated analytics data for the dashboard.
+4.  **Load Balancing:** Deploy the backend API behind a load balancer (e.g., Nginx or AWS ALB) and horizontally scale the API instances to handle the incoming request volume.
