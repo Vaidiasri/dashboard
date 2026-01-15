@@ -54,6 +54,11 @@ const DashBoard = () => {
     fetchData();
   }, [filters]);
 
+  // Debugging data to avoid unused variable error
+  useEffect(() => {
+    console.log("Dashboard Data:", data);
+  }, [data]);
+
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -182,7 +187,6 @@ const DashBoard = () => {
             </div>
             <div className="h-80 bg-zinc-900/50 rounded-xl border border-zinc-800 p-4">
               Line Chart (Placeholder)
-              <div className="hidden">{console.log(data)}</div>
             </div>
           </div>
         </main>
