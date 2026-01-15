@@ -21,6 +21,11 @@ async def get_analytics(
 ):
     """Get analytics data for feature clicks."""
     # Manual Parsing to be robust against frontend formats
+    from datetime import datetime, date, timedelta
+
+    # ... imports ...
+
+    # Manual Parsing to be robust against frontend formats
     try:
         s_date = datetime.strptime(start_date, "%Y-%m-%d").date()
         e_date = datetime.strptime(end_date, "%Y-%m-%d").date()
@@ -30,8 +35,12 @@ async def get_analytics(
             detail="Invalid date format. Expected YYYY-MM-DD",
         )
 
-    # Build filters
-    filters = [FeatureClick.timestamp.between(s_date, e_date)]
+    # Build filters (Inclusive of the End Date up to 23:59:59.999)
+    # We use < (e_date + 1 day) to capture the entire last day
+    filters = [
+        FeatureClick.timestamp >= s_date,
+        FeatureClick.timestamp < (e_date + timedelta(days=1)),
+    ]
 
     if age_group == "<18":
         filters.append(UserModel.age < 18)
