@@ -36,11 +36,11 @@ async def get_analytics(
         )
 
     # Build filters (Inclusive of the End Date up to 23:59:59.999)
-    # We use < (e_date + 1 day) to capture the entire last day
-    filters = [
-        FeatureClick.timestamp >= s_date,
-        FeatureClick.timestamp < (e_date + timedelta(days=1)),
-    ]
+    # Convert dates to datetime to ensure robust comparison with TIMESTAMP columns
+    start_dt = datetime.combine(s_date, datetime.min.time())  # YYYY-MM-DD 00:00:00
+    end_dt = datetime.combine(e_date, datetime.max.time())  # YYYY-MM-DD 23:59:59.999999
+
+    filters = [FeatureClick.timestamp >= start_dt, FeatureClick.timestamp <= end_dt]
 
     if age_group == "<18":
         filters.append(UserModel.age < 18)
