@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useCookies } from "react-cookie";
 import axiosInstance from "../api/axios";
 import type { DashboardFilters, AnalyticsData, LineDataItem, RawLineDataItem } from "../types/dashboard";
@@ -31,65 +31,85 @@ export const useAnalytics = () => {
   const [data, setData] = useState<AnalyticsData>({ barData: [], lineData: [] });
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
-  // Data fetch & Tracking logic
-  const isFirstRun = useRef(true);
+  // Data fetch logic extracted for reuse (The Elite Way)
+  const fetchAnalytics = useCallback(async (isTracking = false) => {
+    // Clean filters
+    const params: any = { ...filters };
+    if (!params.ageGroup) delete params.ageGroup;
+    if (!params.gender) delete params.gender;
+    
+    // Ensure dates are present
+    if (!params.startDate) params.startDate = firstDay;
+    if (!params.endDate) params.endDate = lastDay;
 
-  useEffect(() => {
-    const fetchDataAndTrack = async () => {
-      // Clean filters
-      const params: any = { ...filters };
-      if (!params.ageGroup) delete params.ageGroup;
-      if (!params.gender) delete params.gender;
-      
-      // Ensure dates are present
-      if (!params.startDate) params.startDate = firstDay;
-      if (!params.endDate) params.endDate = lastDay;
+    try {
+      const res = await axiosInstance.get("/track/analytics", {
+        params,
+      });
+      console.log("Fetched Analytics Data:", res.data);
+      setData({ barData: res.data.bar_data, lineData: res.data.line_data });
 
-      try {
-        const res = await axiosInstance.get("/track/analytics", {
-          params,
-        });
-        setData({ barData: res.data.bar_data, lineData: res.data.line_data });
-
-        // Track filter change (skip on mount)
-        if (isFirstRun.current) {
-          isFirstRun.current = false;
-        } else {
-          await axiosInstance.post("/track/", { feature_name: "Filter Interaction" });
-        }
-
-      } catch (err) {
-        console.error("Failed to fetch analytics or track", err);
+      // Track filter change (only if specified and not skipped)
+      if (isTracking) {
+         await axiosInstance.post("/track/", { feature_name: "Filter Interaction" });
       }
-      setCookie(COOKIE_KEYS.DASHBOARD_FILTERS, filters, { path: "/" });
-    };
 
-    // Debounce API calls by 500ms
+    } catch (err) {
+      console.error("Failed to fetch analytics or track", err);
+    }
+  }, [filters, firstDay, lastDay]);
+
+
+  // Effect for Filters (Debounced)
+  const isFirstRun = useRef(true);
+  
+  useEffect(() => {
+    // Save cookies on filter change
+    setCookie(COOKIE_KEYS.DASHBOARD_FILTERS, filters, { path: "/" });
+
     const timer = setTimeout(() => {
-      fetchDataAndTrack();
+      // Logic: If it's NOT the first run, we want to track this as a filter interaction
+      if (isFirstRun.current) {
+        isFirstRun.current = false;
+        fetchAnalytics(false); // Just fetch, don't track initial load
+      } else {
+        fetchAnalytics(true); // Fetch AND track filter change
+      }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters, setCookie]);
+  }, [filters, fetchAnalytics, setCookie]);
 
   // Throttling helper for clicks
-  const lastClickTime = useRef<number>(0);
+  const throttleTimeout = useRef<unknown>(null);
 
   const handleBarClick = async (payload: any) => {
-    // Recharts Bar onClick returns the data item directly
     if (!payload || !payload.feature) return;
 
     const featureName = payload.feature;
     // 1. Immediate UI Update
     setSelectedFeature(featureName);
 
-    // 2. Throttled API Call (2 seconds limit)
-    const now = Date.now();
-    if (now - lastClickTime.current >= 2000) {
-      try {
+    // 2. Throttled Backend Call & Re-fetch
+    if (!throttleTimeout.current) {
+      // Set lock immediately
+      throttleTimeout.current = setTimeout(() => {
+        throttleTimeout.current = null;
+      }, 2000);
+
+        try {
+        console.log(`Tracking initiated for: ${featureName}`);
         await axiosInstance.post("/track/", { feature_name: featureName });
-        console.log(`Tracked click for: ${featureName}`);
-        lastClickTime.current = now;
+        console.log(`Tracked click for: ${featureName} - Waiting for DB commit...`);
+        
+        // Short delay to ensure DB consistency (Read-your-writes)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // THE ELITE WAY: Re-fetch data to show updated counts immediately!
+        console.log("Re-fetching analytics data...");
+        await fetchAnalytics(false); 
+        console.log("Analytics data re-fetched.");
+        
       } catch (err) {
         console.error("Tracking call failed", err);
       }

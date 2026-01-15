@@ -18,6 +18,47 @@ const AnalyticsCharts = ({
   selectedFeature,
   onBarClick,
 }: AnalyticsChartsProps) => {
+  // Empty State for New Users
+  if (!data.barData || data.barData.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[600px] bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center space-y-6">
+        <div className="bg-zinc-800/50 p-6 rounded-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-blue-500"
+          >
+            <line x1="12" y1="20" x2="12" y2="10"></line>
+            <line x1="18" y1="20" x2="18" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="16"></line>
+          </svg>
+        </div>
+        <div className="max-w-md space-y-2">
+          <h3 className="text-2xl font-bold text-white">
+            Welcome to your Dashboard! 👋
+          </h3>
+          <p className="text-zinc-400 text-lg">
+            It looks like we don't have any data yet. Interact with the
+            application to generate your first analytics!
+          </p>
+          <div className="pt-4 flex justify-center gap-2 text-sm text-zinc-500 bg-zinc-900/30 p-4 rounded-lg">
+            <span>🚀</span>
+            <span>
+              Try clicking propertys, changing themes, or adding items.
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Bar Chart */}
