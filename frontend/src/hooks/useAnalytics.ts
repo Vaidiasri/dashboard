@@ -47,7 +47,7 @@ export const useAnalytics = () => {
        const todayStr = new Date().toISOString().split("T")[0];
        if (params.endDate < todayStr) {
          params.endDate = todayStr;
-         console.log("Auto-extending fetch date to include new data (Today)");
+         params.endDate = todayStr;
        }
     }
 
@@ -59,7 +59,9 @@ export const useAnalytics = () => {
       const res = await axiosInstance.get("/track/analytics", {
         params: finalParams,
       });
-      console.log("Fetched Analytics Data:", res.data);
+      const res = await axiosInstance.get("/track/analytics", {
+        params: finalParams,
+      });
       setData({ barData: res.data.bar_data, lineData: res.data.line_data });
 
       // Track filter change (only if specified and not skipped)
@@ -126,31 +128,27 @@ export const useAnalytics = () => {
           return { ...prev, barData: newBarData };
         });
       } else {
-        console.log("Optimistic update skipped due to active demographic filters (Safe Mode).");
+        // console.log("Optimistic update skipped due to active demographic filters (Safe Mode).");
       }
 
       try {
-        console.log(`Tracking initiated for: ${featureName}`);
         await axiosInstance.post("/track/", { feature_name: featureName });
-        console.log(`Tracked click for: ${featureName} - Waiting for DB commit...`);
         
         // Increased delay to ensure AWS/Cloud DB consistency (500ms)
         await new Promise(resolve => setTimeout(resolve, 500));
 
         // Re-fetch data to ensure server sync
-        console.log("Re-fetching analytics data to sync...");
         
         // SMART FETCH: Ensure we fetch up to TODAY so the new DB record is included!
         await fetchAnalytics(false, true); 
-        
-        console.log("Analytics data re-fetched and synced.");
         
       } catch (err) {
         console.error("Tracking call failed", err);
         // Rollback could be implemented here if needed, but for analytics it's usually fine
       }
     } else {
-      console.log(`Tracking throttled for: ${featureName}`);
+    } else {
+      // console.log(`Tracking throttled for: ${featureName}`);
     }
   };
 
