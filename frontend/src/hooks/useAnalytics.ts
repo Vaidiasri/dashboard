@@ -59,9 +59,7 @@ export const useAnalytics = () => {
       const res = await axiosInstance.get("/track/analytics", {
         params: finalParams,
       });
-      const res = await axiosInstance.get("/track/analytics", {
-        params: finalParams,
-      });
+
       setData({ barData: res.data.bar_data, lineData: res.data.line_data });
 
       // Track filter change (only if specified and not skipped)
