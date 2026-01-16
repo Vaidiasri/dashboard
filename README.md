@@ -1,10 +1,10 @@
-# 🚀 Dashboard - Full Stack Application
+# Dashboard - Full Stack Application
 
 A modern full-stack dashboard application with **FastAPI** backend and **React + TypeScript** frontend.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 dashboard/
@@ -31,7 +31,7 @@ dashboard/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 
@@ -49,7 +49,7 @@ dashboard/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -98,7 +98,7 @@ npm install
 
 ---
 
-## 💻 Development
+## Development
 
 ### Run Both Servers (from root):
 
@@ -128,7 +128,7 @@ npm run dev
 
 ---
 
-## 🏗️ Build & Deploy
+## Build & Deploy
 
 ### Build Frontend:
 
@@ -165,7 +165,7 @@ See [DEPLOYMENT_GUIDE.md](backend/DEPLOYMENT_GUIDE.md) for detailed instructions
 
 ---
 
-## 📝 Available Scripts
+## Available Scripts
 
 | Command                    | Description                   |
 | -------------------------- | ----------------------------- |
@@ -178,7 +178,7 @@ See [DEPLOYMENT_GUIDE.md](backend/DEPLOYMENT_GUIDE.md) for detailed instructions
 
 ---
 
-## 🔧 API Endpoints
+## API Endpoints
 
 **Base URL:** `http://localhost:9000`
 
@@ -188,7 +188,7 @@ See [DEPLOYMENT_GUIDE.md](backend/DEPLOYMENT_GUIDE.md) for detailed instructions
 
 ---
 
-## 🌐 Environment Variables
+## Environment Variables
 
 ### Backend (`backend/.env`)
 
@@ -204,7 +204,7 @@ VITE_API_URL=http://localhost:9000
 
 ---
 
-## 📦 Dependencies
+## Dependencies
 
 ### Backend
 
@@ -225,7 +225,7 @@ VITE_API_URL=http://localhost:9000
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -235,13 +235,13 @@ VITE_API_URL=http://localhost:9000
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Vaidiasri**
 
@@ -249,14 +249,14 @@ This project is licensed under the MIT License.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - React documentation
 - Railway.app for hosting
 
 ---
 
-## 🌱 Data Seeding
+## Data Seeding
 
 To populate the database with dummy data (users and feature clicks) for testing:
 
@@ -277,7 +277,7 @@ This will:
 
 ---
 
-## 📈 Scaling Architecture (Essay)
+## Scaling Architecture (Essay)
 
 **Q: If this dashboard needed to handle 1 million write-events per minute, how would you change your backend architecture?**
 
