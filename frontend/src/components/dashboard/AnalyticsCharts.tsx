@@ -68,10 +68,26 @@ const AnalyticsCharts = ({
         </h3>
         <div className="flex-1 min-h-0 w-full" style={{ minHeight: "200px" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.barData} className="cursor-pointer">
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="feature" stroke="#888" />
-              <YAxis stroke="#888" />
+            <BarChart
+              layout="vertical"
+              data={data.barData}
+              className="cursor-pointer"
+              margin={{ left: 20 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#333"
+                horizontal={true}
+                vertical={true}
+              />
+              <XAxis type="number" stroke="#888" />
+              <YAxis
+                dataKey="feature"
+                type="category"
+                stroke="#888"
+                width={100}
+                tick={{ fontSize: 12 }}
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#18181b",
@@ -87,6 +103,7 @@ const AnalyticsCharts = ({
                 name="Users"
                 onClick={onBarClick}
                 cursor="pointer"
+                barSize={30}
               />
             </BarChart>
           </ResponsiveContainer>
