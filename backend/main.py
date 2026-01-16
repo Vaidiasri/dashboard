@@ -19,6 +19,7 @@ origins = [
     "https://dashboard-git-main-vaibhavghildiyal2101-7542s-projects.vercel.app",
     "https://dashboard-nb4jswkm8-vaibhavghildiyal2101-7542s-projects.vercel.app",
     "https://dashboard-ni8z.onrender.com",
+    "https://creative-profiterole-2e677f.netlify.app",
 ]
 
 app.add_middleware(
