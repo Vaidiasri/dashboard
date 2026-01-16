@@ -147,7 +147,6 @@ export const useAnalytics = () => {
         // Rollback could be implemented here if needed, but for analytics it's usually fine
       }
     } else {
-    } else {
       // console.log(`Tracking throttled for: ${featureName}`);
     }
   };
