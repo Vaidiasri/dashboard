@@ -18,7 +18,7 @@ origins = [
     "https://dashboard-lime-omega-94.vercel.app",
     "https://dashboard-git-main-vaibhavghildiyal2101-7542s-projects.vercel.app",
     "https://dashboard-nb4jswkm8-vaibhavghildiyal2101-7542s-projects.vercel.app",
-    "https://dashboard-production-a367.up.railway.app",
+    "https://dashboard-ni8z.onrender.com",
 ]
 
 app.add_middleware(
