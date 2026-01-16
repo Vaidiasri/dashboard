@@ -57,9 +57,10 @@ async def create_user(request: UserCreate, db: AsyncSession = Depends(get_db)):
         raise
     except Exception as e:
         await db.rollback()
+        print(f"❌ Error creating user: {e}")  # DEBUG LOG
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create user",
+            detail=f"Failed to create user: {str(e)}",  # Return error to client for visibility
         )
 
 

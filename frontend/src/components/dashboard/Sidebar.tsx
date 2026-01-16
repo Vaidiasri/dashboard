@@ -29,7 +29,36 @@ const Sidebar = ({
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-bold text-blue-500">Analytics Dashboard</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-blue-500">
+            Analytics Dashboard
+          </h2>
+          <button
+            onClick={() =>
+              setFilters({
+                startDate: new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  1
+                )
+                  .toISOString()
+                  .split("T")[0],
+                endDate: new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth() + 1,
+                  0
+                )
+                  .toISOString()
+                  .split("T")[0],
+                ageGroup: "",
+                gender: "",
+              })
+            }
+            className="text-xs text-zinc-500 hover:text-white underline"
+          >
+            Reset
+          </button>
+        </div>
         {/* Mobile Close Button */}
         <button
           onClick={() => setMobileOpen(false)}
