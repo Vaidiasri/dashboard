@@ -20,6 +20,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
           value={formik.values[name] || ""}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
+          autoComplete={type === "password" ? "current-password" : "off"}
           className="block w-full rounded-xl border border-zinc-700/50 bg-zinc-800/50 py-3 pl-10 text-sm text-white placeholder-zinc-500 shadow-sm transition-all focus:border-white focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-white data-[hover]:bg-zinc-800/70 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>

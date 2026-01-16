@@ -13,11 +13,11 @@ app = FastAPI(
 
 # CORS Configuration
 origins = [
-    "http://localhost:5173",  # Vite default port
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "https://dashboard-production-e3b2.up.railway.app",  # Production frontend if applicable
-    "*",  # Allow all for development convenience, can be restricted later
+    "https://dashboard-lime-omega-94.vercel.app",
+    "https://dashboard-git-main-vaibhavghildiyal2101-7542s-projects.vercel.app",
+    "https://dashboard-nb4jswkm8-vaibhavghildiyal2101-7542s-projects.vercel.app",
 ]
 
 app.add_middleware(
