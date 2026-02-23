@@ -9,8 +9,8 @@
     "dev:frontend": "cd frontend && npm run dev",
     "install:frontend": "cd frontend && npm install",
     "build:frontend": "cd frontend && npm run build",
-    "build": "npm run build:frontend && mkdir -p dist && cp -r frontend/dist/* dist/",
-    "preview:frontend": "cd frontend && npm run preview",
+    "build": "npm install --prefix frontend && npm run build:frontend && mkdir -p dist && cp -r frontend/dist/* dist/",
+    "preview:frontend": "cd frontend && npx vite preview --host 0.0.0.0 --port ${PORT:-4173}",
 
     "deploy:check": "echo Backend: backend/ && echo Frontend: frontend/"
   },
